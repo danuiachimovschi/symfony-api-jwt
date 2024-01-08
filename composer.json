@@ -1,0 +1,19 @@
+{
+    "name": "root/ratchet",
+    "autoload": {
+        "psr-4": {
+            "Ratchet\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "danu"
+        }
+    ],
+    "require": {
+        "workerman/workerman": "^4.1"
+    },
+    "require-dev": {
+        "symfony/var-dumper": "*"
+    }
+}

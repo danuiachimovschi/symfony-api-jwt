@@ -1,0 +1,64 @@
+version: '3'
+
+services:
+  php-ratchet:
+    build:
+      context: .
+      dockerfile: _docker/app/ws/Dockerfile
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./:/var/ratchet_ws/
+      - ./_docker/app/ws/php.ini:/usr/local/etc/php/php.ini
+    command: php server.php start
+    container_name: ratchet_php
+  nginx:
+    image: nginx:latest
+    volumes:
+    - ./:/var/ratchet/
+    - ./_docker/conf.d/:/etc/nginx/conf.d
+    ports:
+    - "8875:80"
+    container_name: ratchet_nginx
+  php:
+    build:
+      context: .
+      dockerfile: _docker/app/ws/Dockerfile
+    volumes:
+    - ./:/var/ratchet
+    - ./_docker/app/ws/php.ini:/usr/local/etc/php/php.ini
+    depends_on:
+      - db
+    container_name: php
+  db:
+    image: mysql:8.0
+    restart: always
+    volumes:
+      - ./tmp/db:/var/lib/mysql
+    environment:
+        MYSQL_DATABASE: ratchet
+        MYSQL_ROOT_PASSWORD: ratchet
+        MYSQL_USER: ratchet
+        MYSQL_PASSWORD: 1111
+    ports:
+      - 8102:3306
+    container_name: ratchet_db
+  memcached:
+    image: memcached:latest
+    restart: always
+    ports:
+      - 11211:11211
+    container_name: ratchet_memcached
+  pma:
+    image: phpmyadmin:latest
+    restart: always
+    links:
+      - db
+    ports:
+      - 8084:80
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+      PMA_ARBITRARY: 1
+      UPLOAD_LIMIT: 300M
+    container_name: ratchet_pma
