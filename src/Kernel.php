@@ -2,8 +2,9 @@
 
 namespace Ratchet;
 
+use Ratchet\Interfaces\KernelInterface;
 
-class Kernel extends \Workerman\Worker
+class Kernel extends \Workerman\Worker implements KernelInterface
 {
     protected static $clients;
 
@@ -16,13 +17,15 @@ class Kernel extends \Workerman\Worker
     public static function onConnect($connection)
     {
         self::$clients->attach($connection);
-        echo "New connection\n";
     }
 
     public static function onMessage($connection, $data)
     {
-        
-        echo "New message\n";
+        $data = json_decode($data, true);
+
+        if (isset($data->toekn)) $connection->close();
+
+
         foreach (self::$clients as $client) {
             if ($connection !== $client) {
                 $client->send($data);
@@ -33,12 +36,10 @@ class Kernel extends \Workerman\Worker
     public static function onClose($connection)
     {
         self::$clients->detach($connection);
-        echo "Connection closed\n";
     }
 
     public static function onError($connection, $code, $msg)
     {
         self::$clients->detach($connection);
-        echo "Error $code $msg\n";
     }
 }

@@ -7,7 +7,7 @@
 <body>
 
 <script>
-    var conn = new WebSocket('ws://0.0.0.0:8080');
+    var conn = new WebSocket('ws://0.0.0.0:8080/dsds');
 
     conn.onopen = function(e) {
         console.log("Connection established!");
