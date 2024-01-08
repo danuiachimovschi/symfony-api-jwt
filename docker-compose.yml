@@ -43,22 +43,3 @@ services:
     ports:
       - 8102:3306
     container_name: ratchet_db
-  memcached:
-    image: memcached:latest
-    restart: always
-    ports:
-      - 11211:11211
-    container_name: ratchet_memcached
-  pma:
-    image: phpmyadmin:latest
-    restart: always
-    links:
-      - db
-    ports:
-      - 8084:80
-    environment:
-      PMA_HOST: db
-      PMA_PORT: 3306
-      PMA_ARBITRARY: 1
-      UPLOAD_LIMIT: 300M
-    container_name: ratchet_pma
