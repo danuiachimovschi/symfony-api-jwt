@@ -3,15 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+
+    <button onclick="sendAction()">
+send
+    </button>
 </head>
 <body>
 
 <script>
-    var conn = new WebSocket('ws://0.0.0.0:8080/dsds');
+    function getRandomInt(min, max) {
+        min = Math.ceil(min);
+        max = Math.floor(max);
+        return Math.floor(Math.random() * (max - min)) + min;
+    }
 
+    var conn = new WebSocket('ws://0.0.0.0:8080/dsds');
+var user_id = getRandomInt(1, 100000);
+    console.log(user_id);
     conn.onopen = function(e) {
         console.log("Connection established!");
-        conn.send(JSON.stringify({category: 'dsdsds'}));
     };
 
     conn.onmessage = function(e) {
@@ -28,6 +38,9 @@
         console.log(e);
     };
 
+   function sendAction(){
+       conn.send(JSON.stringify({subscribe: 'chat',action: 'sendMessage', token : "Dsd", room_id: 1, message: 'Hello world', username: 'John Doe', user_id: user_id}));
+   }
 
 </script>
 </body>
