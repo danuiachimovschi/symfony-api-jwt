@@ -1,21 +1,21 @@
 version: '3'
 
 services:
-  php-ratchet:
-    build:
-      context: .
-      dockerfile: _docker/app/ws/Dockerfile
-    ports:
-      - "8080:8080"
-    volumes:
-      - ./:/var/ratchet_ws/
-      - ./_docker/app/ws/php.ini:/usr/local/etc/php/php.ini
-    command: php server.php start
-    container_name: ratchet_php
+#  php-ratchet:
+#    build:
+#      context: .
+#      dockerfile: _docker/app/ws/Dockerfile
+#    ports:
+#      - "8080:8080"
+#    volumes:
+#      - ./:/var/ratchet_ws/
+#      - ./_docker/app/ws/php.ini:/usr/local/etc/php/php.ini
+#    command: php server.php start
+#    container_name: ratchet_php
   nginx:
     image: nginx:latest
     volumes:
-    - ./:/var/ratchet/
+    - ./:/var/ratchet_ws/
     - ./_docker/conf.d/:/etc/nginx/conf.d
     ports:
     - "8875:80"
@@ -25,7 +25,7 @@ services:
       context: .
       dockerfile: _docker/app/ws/Dockerfile
     volumes:
-    - ./:/var/ratchet
+    - ./:/var/ratchet_ws/
     - ./_docker/app/ws/php.ini:/usr/local/etc/php/php.ini
     depends_on:
       - db
