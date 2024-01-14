@@ -1,4 +1,11 @@
-FROM php:8.0-fpm
+FROM php:8.2-fpm
+
+#install driver for postgres
+
+RUN apt-get update \
+    && apt-get install -y git libpq-dev libzip-dev zip unzip \
+    && docker-php-ext-install pdo_pgsql zip \
+    && docker-php-ext-enable pdo_pgsql zip
 
 # Install required packages, including libzmq
 RUN apt-get update && \
