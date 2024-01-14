@@ -1,17 +1,6 @@
 version: '3'
 
 services:
-#  php-ratchet:
-#    build:
-#      context: .
-#      dockerfile: _docker/app/ws/Dockerfile
-#    ports:
-#      - "8080:8080"
-#    volumes:
-#      - ./:/var/ratchet_ws/
-#      - ./_docker/app/ws/php.ini:/usr/local/etc/php/php.ini
-#    command: php server.php start
-#    container_name: ratchet_php
   nginx:
     image: nginx:latest
     volumes:
@@ -20,6 +9,8 @@ services:
     ports:
     - "8875:80"
     container_name: ratchet_nginx
+    networks:
+      - ratchet
   php:
     build:
       context: .
@@ -27,19 +18,26 @@ services:
     volumes:
     - ./:/var/ratchet_ws/
     - ./_docker/app/ws/php.ini:/usr/local/etc/php/php.ini
-    depends_on:
-      - db
+    extra_hosts:
+      - host.docker.internal:host-gateway
     container_name: php
+    networks:
+      - ratchet
   db:
-    image: mysql:8.0
-    restart: always
-    volumes:
-      - ./tmp/db:/var/lib/mysql
-    environment:
-        MYSQL_DATABASE: ratchet
-        MYSQL_ROOT_PASSWORD: ratchet
-        MYSQL_USER: ratchet
-        MYSQL_PASSWORD: 1111
+    image: postgres:${POSTGRES_VERSION:-15}-alpine
     ports:
-      - 8102:3306
-    container_name: ratchet_db
+      - "5431:5432"
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-app}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-!ChangeMe!}
+      POSTGRES_USER: ${POSTGRES_USER:-app}
+    volumes:
+      - db_data:/var/lib/postgresql/data:rw
+    networks:
+      - ratchet
+networks:
+  ratchet:
+    driver: bridge
+
+volumes:
+  db_data:
